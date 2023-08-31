@@ -1,7 +1,7 @@
 # import all needed libraries, no externals needed
 import socket, ssl, json, time
 
-REQUEST_DEBUG_FORMAT = '<eRequest, payload bytes=[payload_here]>' # formatting for request debug print
+REQUEST_DEBUG_FORMAT = '<RequestEx payload bytes=[payload_here]>' # formatting for request debug print
 
 # easy safer, yet slower sleep function
 def sleep(dur: float | int):
@@ -23,7 +23,7 @@ class HttpResponse:
         self.text = text; self.status_code = status_code; self.connected_at = conn_at; self.sent_at = sent_at; self.received_at = recv_at; self.round_trip = round_trip; self.connection_time = conn_time; self.headers = headers
 
 # custom easy-to-use request maker class that constructs with all info needed for the request then builds/executes it via the execute() extension
-class eRequest:
+class RequestEx:
     # initalize new custom request object, take in all attributes needed and set defaults if needed
     def __init__(self, method: str, uri: str, *, headers: dict = None, data: dict = None, params: dict = None, timing: RequestTiming = None):
         self.method = method; self.uri = uri; self.headers = headers; self.data = data; self.params = params; self.timing = timing
