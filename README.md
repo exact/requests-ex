@@ -65,7 +65,7 @@ Finally, we execute our request & get all the information about it:
 
 ```py
 # Do the request
-newResp = newRequest.do(debug=True, skipTimesCheck=False) # Parameters are optional
+newResp = newRequest.execute(debug=True, skipTimesCheck=False) # Parameters are optional
 
 # Response/Result Details
 newResp.connection_time  # Exact seconds/milliseconds it took to connect to the remote server
