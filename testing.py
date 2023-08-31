@@ -13,8 +13,8 @@ def testing():
     print(f'sending at:    {sending}') 
     print(f'recving at:    {recving}') # not using currently(works tho), and kinda pointless but why not add it right?
 
-    # build test eRequest object and give it some test mc api info (create a new MC profile)
-    newRequest = eRequest(
+    # build test RequestEx object and give it some test mc api info (create a new MC profile)
+    newRequest = RequestEx(
         # request method & URI are two required params for the request, all others are optional
         'post', 'https://api.minecraftservices.com/minecraft/profile', # <- only 2 required arguements
 
