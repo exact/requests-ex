@@ -19,9 +19,9 @@ Start by defining when you want everything in your request to happen:
 **Note:** You don't have to set all or any of the values, they are all optional.
 
 ```py
-myConnecting  = round(time.time()+3)
-mySending     = round(time.time()+5)
-myRecving     = round(time.time()+10)
+myConnecting  = round(time.time() + 3)
+mySending     = round(time.time() + 5)
+myRecving     = round(time.time() + 10)
 ```
 In this example we'll connect in 3 seconds from the current time, send after 5 seconds and wait to receive any data after 10 seconds. We use `round()` to make the value even and not decimals for easy viewing.
 
@@ -83,6 +83,8 @@ newResp.headers          # Headers of HTTP response from the remote server
 
 You now have all the response data & timing information, all time data is in UNIX or seconds. You can convert any value that is seconds to milliseconds **by multiplying by 1000**. Timing information like send/receive/connect times are gathered after the socket operation is called, response data is formatted into `text` and `headers` values on the response object, similar to the normal requests library.
 ## Optimizations & Recommendations
+
+Recommended Python Version: **3.11+**
 
 I've tried to make this code as easy to use as possible while also retaining the lazer-like precision my other scripts have. It mainly uses a CPU technique called [busy waiting](https://en.wikipedia.org/wiki/Busy_waiting) for very precise timing, but does so in short **<100ms** bursts(if set to) to make CPU utilization minimal. In my experience there is virtually no downside to this approach and even when running multiple scripts that are busy waiting the modern processors I've used are able to manage them and still get amazing precision. We wait until around 100 milliseconds before an operation is about to take place with the built-in Python `sleep()` method, [which has varying degrees of accuracy depending on your platform/device](https://stackoverflow.com/questions/1133857/how-accurate-is-pythons-time-sleep), then we busy wait the remaining milliseconds for the best result.
 
