@@ -31,7 +31,7 @@ class RequestEx:
     # there are alternative type checks to the isinstance() calls we use, but I choose to use the isinstance built-in for valdiation
 
     # once initialized, execute & complete the request if possible and function is called
-    def do(self, *, debug: bool = False, skipTimesCheck: bool = False) -> HttpResponse:
+    def execute(self, *, debug: bool = False, skipTimesCheck: bool = False) -> HttpResponse:
         # check that timings makes sense
         if self.timing != None and isinstance(self.timing, RequestTiming) and not skipTimesCheck:
             if self.timing.connectAt != None and self.timing.connectAt <= time.time() + 1:
