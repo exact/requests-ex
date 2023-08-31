@@ -121,7 +121,7 @@ class RequestEx:
                     # then we bottle it in a nice response object for easy usage
                     return HttpResponse(
                         str_resp.split('\r\n\r\n')[1],  # HTTP Body
-                        int(str_resp[9:12]),            # status code
+                        int(str_resp[9:12]),            # HTTP status code
                         conn,                           # exact unix .connect() finished
                         send,                           # exact unix .send() finished 
                         recv,                           # exact unix .recv() finished 
