@@ -43,7 +43,7 @@ def testing():
     # execute() fires the request and respects any timing if set, the debug arg can be set to True to view raw payloads in console
     # NOTE: if send/connect time is within ~1s of calling execute() it will throw an error unless skipTimesCheck is True
     # all parameters are optional!
-    newResp = newRequest.do(debug=True, skipTimesCheck=False) 
+    newResp = newRequest.execute(debug=True, skipTimesCheck=False) 
 
     # now we pretty print out all request data & variables :D
 
