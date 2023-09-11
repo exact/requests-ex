@@ -110,8 +110,7 @@ If you have any feedback, questions, concerns or just want to say hi, please rea
 My email is issy@evie.space
 
 
-## 🪪 Resources & License
+## 🪪 License & Resources Used
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
  - [Python WIKI: Python Speed & Performance Tips](https://wiki.python.org/moin/PythonSpeed/PerformanceTips)
-
-[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
