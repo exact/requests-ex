@@ -1,11 +1,15 @@
 # import all needed libraries, no externals needed
-import socket, ssl, json, time
+from json   import dumps
+from ssl    import create_default_context
+from time   import time, sleep, perf_counter
+from socket import socket, AF_INET, SOCK_STREAM
 
-REQUEST_DEBUG_FORMAT = '<RequestEx payload bytes=[payload_here]>' # formatting for request debug print
+REQUEST_DEBUG_FORMAT = '<RequestEx payload=[payload_here]>' # formatting for request debug print
 
 # easy safer, yet slower sleep function
-def sleep(dur: float | int):
-    if dur > 0: time.sleep(dur) # only call sleep() if duration is positive
+def sleep_ex(dur: float | int):
+    if dur > 0:
+        sleep(dur) # only call sleep() if duration is positive
 
 # custom request error objects
 class RequestTimingsError(Exception): pass
@@ -15,28 +19,39 @@ class RequestRequestError(Exception): pass
 # custom request timing object, takes in UNIX times to perform socket operations
 class RequestTiming:
     def __init__(self, *, connectAt: float | int = None, sendAt: float | int = None, receiveAt: float | int = None):
-        self.connectAt = connectAt; self.sendAt = sendAt; self.receiveAt = receiveAt
+        self.sendAt    = sendAt
+        self.receiveAt = receiveAt
+        self.connectAt = connectAt
 
 # custom HttpResponse-like object with universal attributes such as 'text', 'status_code' and 'headers' for easy response parsing
 class HttpResponse:
     def __init__(self, text: str, status_code: int, conn_at: float, sent_at: float, recv_at: float, round_trip: float, conn_time: float, headers: dict):
-        self.text = text; self.status_code = status_code; self.connected_at = conn_at; self.sent_at = sent_at; self.received_at = recv_at; self.round_trip = round_trip; self.connection_time = conn_time; self.headers = headers
+        self.text            = text
+        self.connected_at    = conn_at
+        self.sent_at         = sent_at
+        self.received_at     = recv_at
+        self.headers         = headers
+        self.round_trip      = round_trip
+        self.status_code     = status_code
 
 # custom easy-to-use request maker class that constructs with all info needed for the request then builds/executes it via the execute() extension
 class RequestEx:
     # initalize new custom request object, take in all attributes needed and set defaults if needed
     def __init__(self, method: str, uri: str, *, headers: dict = None, data: dict = None, params: dict = None, timing: RequestTiming = None):
-        self.method = method; self.uri = uri; self.headers = headers; self.data = data; self.params = params; self.timing = timing
-
-    # there are alternative type checks to the isinstance() calls we use, but I choose to use the isinstance built-in for valdiation
+        self.uri     = uri
+        self.data    = data
+        self.params  = params
+        self.timing  = timing
+        self.headers = headers
 
     # once initialized, execute & complete the request if possible and function is called
+    # there are alternative type checks to the isinstance() calls we use, but I choose to use the isinstance built-in for valdiation
     def execute(self, *, debug: bool = False, skipTimesCheck: bool = False) -> HttpResponse:
         # check that timings makes sense
         if self.timing != None and isinstance(self.timing, RequestTiming) and not skipTimesCheck:
-            if self.timing.connectAt != None and self.timing.connectAt <= time.time() + 1:
+            if self.timing.connectAt != None and self.timing.connectAt <= time() + 1:
                 raise RequestTimingsError('Connection Time must not be in the past or within a second of current time!')
-            if self.timing.sendAt != None and self.timing.sendAt <= time.time() + 1:
+            if self.timing.sendAt != None and self.timing.sendAt <= time() + 1:
                 raise RequestTimingsError('Send Time must not be in the past or within a second of current time!') 
 
         # ^ if timings above don't make sense(occur within 1 second of calling), we will raise an error, skipTimesCheck can be set to True to avoid this behavior
@@ -63,7 +78,7 @@ class RequestEx:
                 payloadData.append(f'Content-Length: {len(str(self.data))}') # if data is set we need to set Content-Length header
             payloadData.append('') # \r\n
             if self.data != None and isinstance(self.data, dict) and len(self.data) > 0: 
-                payloadData.append(json.dumps(self.data)) # dump the JSON formatted dictionary into the body of the request
+                payloadData.append(dumps(self.data)) # dump the JSON formatted dictionary into the body of the request
             else: payloadData.append('') # \r\n
 
             # build the payload from the array we have constructed
@@ -76,37 +91,37 @@ class RequestEx:
 
         # make a new normal socket & try to send the request/payload, respecting timings if set
         try:
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s: # TODO: make socket object settable & support all socket-like objects
+            with socket(AF_INET, SOCK_STREAM) as s: # TODO: make socket object settable & support all socket-like objects
                 # timing solution is ugly but very accurate, we use infinite loops for close to real time performace & millisecond accuracy
 
                 # time the connection operation (ugly but works TT)
                 if self.timing != None and isinstance(self.timing, RequestTiming) and self.timing.connectAt != None:
-                    sleep(self.timing.connectAt - time.time() - .1)
+                    sleep_ex(self.timing.connectAt - time() - .1)
                     while 1:
-                        if time.time() >= self.timing.connectAt: connStart = time.perf_counter(); s.connect((host_name, 443)); conn=time.time(); break
-                else: connStart = time.perf_counter(); s.connect((host_name, 443)); conn=time.time() # no timing needed, do operation right away
-                connEnd = time.perf_counter()
+                        if time() >= self.timing.connectAt: connStart = perf_counter(); s.connect((host_name, 443)); conn=time(); break
+                else: connStart = perf_counter(); s.connect((host_name, 443)); conn=time() # no timing needed, do operation right away
+                connEnd = perf_counter()
 
                 # wrap the socket as a SSLSocket by default, maybe add granularity for no HTTPS later?
-                with ssl.create_default_context().wrap_socket(s, server_hostname=host_name) as mainsocket:
+                with create_default_context().wrap_socket(s, server_hostname=host_name) as mainsocket:
                     # the main timing of the request now happens, we either send/recv right away or wait to send/recv at exact unix
 
                     # time the sending (ugly but works TT)
                     if self.timing != None and isinstance(self.timing, RequestTiming) and self.timing.sendAt != None:
-                        sleep(self.timing.sendAt - time.time() - .1)
+                        sleep_ex(self.timing.sendAt - time() - .1)
                         while 1:
-                            if time.time() >= self.timing.sendAt: start = time.perf_counter(); mainsocket.send(payload); send=time.time(); break
-                    else: start = time.perf_counter(); mainsocket.send(payload); send=time.time() # no timing needed, do operation right away
+                            if time() >= self.timing.sendAt: start = perf_counter(); mainsocket.send(payload); send=time(); break
+                    else: start = perf_counter(); mainsocket.send(payload); send=time() # no timing needed, do operation right away
 
                     # time the receiving (ugly but works TT)
                     if self.timing != None and isinstance(self.timing, RequestTiming) and self.timing.receiveAt != None:
-                        sleep(self.timing.receiveAt - time.time() - .1)
+                        sleep_ex(self.timing.receiveAt - time() - .1)
                         while 1:
-                            if time.time() >= self.timing.receiveAt: 
-                                socket_resp = mainsocket.recv(4096); recv=time.time(); break
-                    else: socket_resp = mainsocket.recv(4096); recv=time.time() # no timing needed, do operation right away
+                            if time() >= self.timing.receiveAt: 
+                                socket_resp = mainsocket.recv(4096); recv=time(); break
+                    else: socket_resp = mainsocket.recv(4096); recv=time() # no timing needed, do operation right away
 
-                    end = time.perf_counter() # request has finished
+                    end = perf_counter() # request has finished
         
                     # decode the received bytes & grab all response headers
                     str_resp = socket_resp.decode('utf-8'); headers = {}
