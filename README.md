@@ -7,7 +7,7 @@ For example, you can specify your request to connect to the server at a specific
 
 
 
-## 🚀 Recommendations/Optimizations
+## 🚀 Recommendations & Optimizing
 
 Recommended Python Version: **3.11+**
 
