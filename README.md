@@ -103,14 +103,14 @@ You now have all the response data & timing information, all time data is in UNI
 If you have any recommendations or suggestions **please feel free to contact me**!
 
 
-## Feedback
+## 🫂 Feedback
 
 If you have any feedback, questions, concerns or just want to say hi, please reach out!
 
 My email is issy@evie.space
 
 
-## Resources & License
+## 🪪 Resources & License
 
  - [Python WIKI: Python Speed & Performance Tips](https://wiki.python.org/moin/PythonSpeed/PerformanceTips)
 
