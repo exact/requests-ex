@@ -1,5 +1,5 @@
 
-# RequestsEx
+# 🌐 RequestsEx
 
 This project is part of my script I used for [**my Minecraft sniper**](https://evie.space/snipes) which I don't use anymore and does not work. It is intended for applications which really need to be precise and only with a few milliseconds of any delay. This wrapper breaks down the underlying socket used for network requests and allows you, if you choose, to specify custom points in time for the socket event to occur exactly.
 
@@ -7,14 +7,15 @@ For example, you can specify your request to connect to the server at a specific
 
 
 
+## 🚀 Recommendations/Optimizations
 
-## Contact Me
+Recommended Python Version: **3.11+**
 
-- [My Website](https://evie.space)
-- [@garment on Discord](https://discord.com/users/993964054081191966)
+I've tried to make this code as easy to use as possible while also retaining the lazer-like precision my other scripts have. It mainly uses a CPU technique called [busy waiting](https://en.wikipedia.org/wiki/Busy_waiting) for very precise timing, but does so in short **<100ms** bursts(if set to) to make CPU utilization minimal. In my experience there is virtually no downside to this approach and even when running multiple scripts that are busy waiting the modern processors I've used are able to manage them and still get amazing precision. We wait until around 100 milliseconds before an operation is about to take place with the built-in Python `sleep()` method, [which has varying degrees of accuracy depending on your platform/device](https://stackoverflow.com/questions/1133857/how-accurate-is-pythons-time-sleep), then we busy wait the remaining milliseconds for the best result.
 
 
-## Usage
+
+## ✏️ Usage
 
 Start by defining when you want everything in your request to happen:
 
@@ -84,14 +85,16 @@ newResp.headers          # Headers of HTTP response from the remote server
 **Note:** If specified connect/send is within ~1s of calling `.execute()` it will throw an error unless **skipTimesCheck** is True!
 
 You now have all the response data & timing information, all time data is in UNIX or seconds. You can convert any value that is seconds to milliseconds **by multiplying by 1000**. Timing information like send/receive/connect times are gathered after the socket operation is called, response data is formatted into `text` and `headers` values on the response object, similar to the normal requests library.
-## Optimizations & Recommendations
-
-Recommended Python Version: **3.11+**
-
-I've tried to make this code as easy to use as possible while also retaining the lazer-like precision my other scripts have. It mainly uses a CPU technique called [busy waiting](https://en.wikipedia.org/wiki/Busy_waiting) for very precise timing, but does so in short **<100ms** bursts(if set to) to make CPU utilization minimal. In my experience there is virtually no downside to this approach and even when running multiple scripts that are busy waiting the modern processors I've used are able to manage them and still get amazing precision. We wait until around 100 milliseconds before an operation is about to take place with the built-in Python `sleep()` method, [which has varying degrees of accuracy depending on your platform/device](https://stackoverflow.com/questions/1133857/how-accurate-is-pythons-time-sleep), then we busy wait the remaining milliseconds for the best result.
 
 
-## Todo
+
+## 🫶 Contact Me
+
+- [My Website](https://evie.space)
+- [@garment on Discord](https://discord.com/users/993964054081191966)
+
+
+## 📃 Todo
 
 - Threads/Futures for built-in & better concurrency
 - Custom socket class objects for support for pysocks and other proxy/custom sockets
