@@ -3,15 +3,15 @@
 
 This project is part of my script I used for [**my Minecraft sniper**](https://evie.space/snipes) which I don't use anymore and does not work. It is intended for applications which really need to be precise and only with a few milliseconds of any delay. This wrapper breaks down the underlying socket used for network requests and allows you, if you choose, to specify custom points in time for the socket event to occur exactly.
 
-For example, you can specify your request to connect to the server at a specific time, lets call it **x**, and then additionally you can set your payload/data of your request to be sent **exactly 10 seconds** after your connection, so **x + 10**, it's that easy. Do note that time is relative to your server/machine, so make sure you're synced to an NTP protocol. Upon locally checking the times the socket actions were executed you will find **<1ms accuracy** on all set socket events.
+For example, you can specify your request to connect to the server at a specific time, lets call it **x**, and then additionally you can set your payload/data of your request to be sent **exactly 10 seconds** after your connection, so `x + 10`, it's that easy. Do note that time is relative to your server/machine, so make sure you're synced to an NTP protocol. Upon locally checking the times the socket actions were executed you will find `<1ms accuracy` on all set socket events.
 
 
 
 ## 🚀 Recommendations & Optimizing
 
-Recommended Python Version: **3.11+**
+Recommended Python Version: `3.11+`
 
-I've tried to make this code as easy to use as possible while also retaining the lazer-like precision my other scripts have. It mainly uses a CPU technique called [busy waiting](https://en.wikipedia.org/wiki/Busy_waiting) for very precise timing, but does so in short **<100ms** bursts(if set to) to make CPU utilization minimal. In my experience there is virtually no downside to this approach and even when running multiple scripts that are busy waiting the modern processors I've used are able to manage them and still get amazing precision. We wait until around 100 milliseconds before an operation is about to take place with the built-in Python `sleep()` method, [which has varying degrees of accuracy depending on your platform/device](https://stackoverflow.com/questions/1133857/how-accurate-is-pythons-time-sleep), then we busy wait the remaining milliseconds for the best result.
+I've tried to make this code as easy to use as possible while also retaining the lazer-like precision my other scripts have. It mainly uses a CPU technique called [busy waiting](https://en.wikipedia.org/wiki/Busy_waiting) for very precise timing, but does so in short `<100ms` bursts(if set to) to make CPU utilization minimal. In my experience there is virtually no downside to this approach and even when running multiple scripts that are busy waiting the modern processors I've used are able to manage them and still get amazing precision. We wait until around 100 milliseconds before an operation is about to take place with the built-in Python `sleep()` method, [which has varying degrees of accuracy depending on your platform/device](https://stackoverflow.com/questions/1133857/how-accurate-is-pythons-time-sleep), then we busy wait the remaining milliseconds for the best result.
 
 
 
